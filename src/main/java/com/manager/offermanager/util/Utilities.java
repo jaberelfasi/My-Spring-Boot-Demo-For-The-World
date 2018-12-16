@@ -1,12 +1,17 @@
 package com.manager.offermanager.util;
 
+
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,29 +23,31 @@ import com.manager.offermanager.model.Offer;
 
 public class Utilities {
 
+	private int localServerPort;
 	
-	// Utilities
+	public Utilities(int localServerPort) {
+		// TODO Auto-generated constructor stub
+		this.localServerPort = localServerPort;
+	}
+
+		// Utilities
 		public void prepTestDataInDB(String stringType) throws ParseException {
 			// TODO Auto-generated method stub
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-			Date date = dateFormat.parse("10/11/2018");
+			/*SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			Date date = dateFormat.parse("10/11/2018");*/
 
 			RestTemplate restTemplate = new RestTemplate();
 			List<Offer> ol = fillTestList(stringType);
 			for (int i = 0; i < ol.size(); i++) {
 				
 				Offer of = ol.get(i);
-
-				if (of.getId() == 3) {
-					of.setCreatedAt(date);
-					System.out.println(of.getCreatedAt());
-				}
 				
 				try {
-					ResponseEntity<Offer> response = restTemplate.postForEntity("http://localhost:8088/api/offer",
+					ResponseEntity<Offer> response = restTemplate.postForEntity("http://localhost:"+localServerPort+"/api/offer",
 							of, Offer.class);
 				} catch (Exception e) {
-					String url = "http://localhost:8088/api/offer/" + of.getId();
+					//System.out.println(e);
+					String url = "http://localhost:"+localServerPort+"/api/offer/" + of.getId();
 					restTemplate.put(url, of);
 				}
 			}
@@ -148,9 +155,37 @@ public class Utilities {
 			offer.setCreatedAt(date);
 			
 			RestTemplate restTemplate = new RestTemplate();
-			String url = "http://localhost:8088/api/offer/1";
+			String url = "http://localhost:"+localServerPort+"/api/offer/1";
 			restTemplate.put(url, offer);
 			
+		}
+		
+		public void editOfferCreateDate(long offerId, Date date) {
+			
+			try
+		    {
+		      // create a java mysql database connection
+		      String myDriver = "com.mysql.cj.jdbc.Driver";
+		      String myUrl = "jdbc:mysql://localhost:3306/offermanager";
+		      Class.forName(myDriver);
+		      Connection conn = DriverManager.getConnection(myUrl, "manageruser", "managerpass");
+		    
+		      // create the java mysql update preparedstatement
+		      String query = "update offermanager.offer set created_at = ? where id = ?";
+		      PreparedStatement preparedStmt = conn.prepareStatement(query);
+		      preparedStmt.setString   (1, "2018-10-10 08:02:05");
+		      preparedStmt.setLong(2, offerId);
+
+		      // execute the java preparedstatement
+		      preparedStmt.executeUpdate();
+		      
+		      conn.close();
+		    }
+		    catch (Exception e)
+		    {
+		      System.err.println("Got an exception! ");
+		      System.err.println(e.getMessage());
+		    }
 		}
 		
 }

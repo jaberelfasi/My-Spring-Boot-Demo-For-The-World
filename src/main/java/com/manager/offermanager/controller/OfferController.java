@@ -9,6 +9,9 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,7 +56,7 @@ public class OfferController {
 		return offerRepository.findAll();
 	}
 
-	// query offers: get offers with a specific name
+	// query offers: get offers with a specific name (returns an array of offers)
 	@GetMapping("/offer/{offername}")
 	public List<Offer> getOfferByOffername(@PathVariable(value = "offername") String offername) {
 		List<Offer> offerlist = offerRepository.findAll();
@@ -65,7 +68,7 @@ public class OfferController {
 		return foundOffers;
 	}
 
-	// query offers: check if an offer is valid and has not been canceled
+	// query offers: check if an offer is valid, expired, or canceled
 	@GetMapping("/checkoffer/{id}")
 	public String checkValidity(@PathVariable(value = "id") Long offerId) {
 		Offer offer = offerRepository.findById(offerId)
@@ -97,7 +100,7 @@ public class OfferController {
 			if ((offerAge - offerperiod) >= 0)
 				offerStatus = "Offer has expired";
 			else
-				offerStatus = "Offer Still Valid ("+(offerperiod-offerAge)+") hours left";
+				offerStatus = "Offer Still Valid (" + (offerperiod - offerAge) + ") hours left";
 
 		} else {
 			offerStatus = "Offer has been canceled";
@@ -105,6 +108,18 @@ public class OfferController {
 
 		return offerStatus;
 	}
+	
+	// query offers: get only one offer by id
+	@GetMapping("/singleoffer/{id}")
+	public Offer getASingleOffer(@PathVariable(value = "id") Long offerId) {
+
+		Offer offer = offerRepository.findById(offerId)
+				.orElseThrow(() -> new ResourceNotFoundException("Offer", "id", offerId));
+
+		return offer;
+	}
+		
+
 
 	public int daysBetween(Date d1, Date d2) {
 		return (int) ((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
