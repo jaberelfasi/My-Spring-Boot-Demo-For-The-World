@@ -67,7 +67,7 @@ public class OfferController {
 
 	// query offers: check if an offer is valid and has not been canceled
 	@GetMapping("/checkoffer/{id}")
-	public String getNoteById(@PathVariable(value = "id") Long offerId) {
+	public String checkValidity(@PathVariable(value = "id") Long offerId) {
 		Offer offer = offerRepository.findById(offerId)
 				.orElseThrow(() -> new ResourceNotFoundException("Offer", "id", offerId));
 		String offerStatus = "Not Specified Yet";

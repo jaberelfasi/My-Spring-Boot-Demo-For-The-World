@@ -110,4 +110,12 @@ public class Offer implements Serializable {
 		this.updatedAt = updatedAt;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 }
