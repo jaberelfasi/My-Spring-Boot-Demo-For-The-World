@@ -24,11 +24,11 @@ import com.manager.offermanager.util.Utilities;
 public class OfferManagerApplicationTests {
 
 	Utilities util = new Utilities();
-	@Value("8090")
+	@Value("8088")
 	private int localServerPort;
 
 	@Before
-	public void prepData() throws ParseException {
+	public void prepData() throws ParseException{
 		util.prepTestDataInDB("validity");
 		util.prepTestDataInDB("searchByName");
 		util.prepTestDataInDB("extra");
@@ -48,7 +48,7 @@ public class OfferManagerApplicationTests {
 		int idOfExpriedOffer = 1;
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.getForEntity(
-				"http://localhost:8090/api/checkoffer/" + idOfExpriedOffer, String.class, localServerPort);
+				"http://localhost:8088/api/checkoffer/" + idOfExpriedOffer, String.class, localServerPort);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getBody()).contains("Offer has expired");
@@ -59,7 +59,7 @@ public class OfferManagerApplicationTests {
 		int idOfValidOffer = 2;
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate
-				.getForEntity("http://localhost:8090/api/checkoffer/" + idOfValidOffer, String.class, localServerPort);
+				.getForEntity("http://localhost:8088/api/checkoffer/" + idOfValidOffer, String.class, localServerPort);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getBody()).contains("Offer Still Valid");
@@ -70,7 +70,7 @@ public class OfferManagerApplicationTests {
 		int idOfCanceledOffer = 3;
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.getForEntity(
-				"http://localhost:8090/api/checkoffer/" + idOfCanceledOffer, String.class, localServerPort);
+				"http://localhost:8088/api/checkoffer/" + idOfCanceledOffer, String.class, localServerPort);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getBody()).contains("Offer has been canceled");
@@ -80,7 +80,7 @@ public class OfferManagerApplicationTests {
 	public void testCreateOffer() {
 		Offer offer = util.mokOffer();
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<Offer> response = restTemplate.postForEntity("http://localhost:8090/api/offer", offer,
+		ResponseEntity<Offer> response = restTemplate.postForEntity("http://localhost:8088/api/offer", offer,
 				Offer.class);
 
 		Offer of = response.getBody();
@@ -98,7 +98,7 @@ public class OfferManagerApplicationTests {
 		List<Offer> testList = util.fillTestList("searchByName");
 		String keyWord = "offerlist for test";
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<Offer[]> response = restTemplate.getForEntity("http://localhost:8090/api/offer/" + keyWord,
+		ResponseEntity<Offer[]> response = restTemplate.getForEntity("http://localhost:8088/api/offer/" + keyWord,
 				Offer[].class, localServerPort);
 
 		List<Offer> lo = Arrays.asList(response.getBody());
@@ -117,7 +117,7 @@ public class OfferManagerApplicationTests {
 
 		int idOfOfferToBeCanceled = 1;
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<Offer[]> response = restTemplate.getForEntity("http://localhost:8090/api/offer", Offer[].class,
+		ResponseEntity<Offer[]> response = restTemplate.getForEntity("http://localhost:8088/api/offer", Offer[].class,
 				localServerPort);
 
 		List<Offer> ofList = Arrays.asList(response.getBody());
@@ -127,11 +127,11 @@ public class OfferManagerApplicationTests {
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		of.setCanceled(true);
-		String url = "http://localhost:8090/api/offer/" + of.getId();
+		String url = "http://localhost:8088/api/offer/" + of.getId();
 		restTemplate.put(url, of);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-		response = restTemplate.getForEntity("http://localhost:8090/api/offer", Offer[].class, localServerPort);
+		response = restTemplate.getForEntity("http://localhost:8088/api/offer", Offer[].class, localServerPort);
 
 		ofList = Arrays.asList(response.getBody());
 		of = ofList.get(7);

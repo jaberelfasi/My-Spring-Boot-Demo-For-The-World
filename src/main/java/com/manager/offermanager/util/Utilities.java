@@ -37,10 +37,10 @@ public class Utilities {
 				}
 				
 				try {
-					ResponseEntity<Offer> response = restTemplate.postForEntity("http://localhost:8090/api/offer",
+					ResponseEntity<Offer> response = restTemplate.postForEntity("http://localhost:8088/api/offer",
 							of, Offer.class);
 				} catch (Exception e) {
-					String url = "http://localhost:8090/api/offer/" + of.getId();
+					String url = "http://localhost:8088/api/offer/" + of.getId();
 					restTemplate.put(url, of);
 				}
 			}
@@ -148,7 +148,7 @@ public class Utilities {
 			offer.setCreatedAt(date);
 			
 			RestTemplate restTemplate = new RestTemplate();
-			String url = "http://localhost:8090/api/offer/1";
+			String url = "http://localhost:8088/api/offer/1";
 			restTemplate.put(url, offer);
 			
 		}
